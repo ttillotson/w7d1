@@ -1,7 +1,16 @@
 import React from 'react';
+import TodoListItem from './todo_list_item';
+import TodoForm from '../todo_list/todo_form';
 
-export default () => {
+export default ({ todos, receiveTodo}) => {
   return (
-  <h3>Todo List Here</h3>
+    <div>
+      <ul>
+        {todos.map((todo) => (
+          <TodoListItem key={todo.id} todo={ todo } />
+        ))}
+      </ul>
+      <TodoForm receiveTodo={ receiveTodo }/>
+    </div>
   );
 };
