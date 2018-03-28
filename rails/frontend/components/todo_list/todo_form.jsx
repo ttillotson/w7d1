@@ -1,5 +1,5 @@
 import React from 'react';
-import uniqueId from '../../../util.js';
+import uniqueId from '../../util/util.js';
 
 
 class TodoForm extends React.Component {
@@ -7,11 +7,13 @@ class TodoForm extends React.Component {
     super(props);
     this.state = {
       title: '',
-      body: ''
+      body: '',
+      completed: false,
     };
     this.click = this.click.bind(this);
     this.setTitle = this.setTitle.bind(this);
     this.setBody = this.setBody.bind(this);
+    this.setComplete = this.setComplete.bind(this);
   }
 
 
@@ -20,28 +22,34 @@ class TodoForm extends React.Component {
     this.setState({ title });
   }
 
+  setComplete(e){
+    const completed = Boolean(e.target.checked);
+    this.setState({ completed });
+  }
+
   setBody(e){
     const body = e.target.value;
     this.setState({ body });
   }
 
   resetFields() {
-    this.setState({ title: '', body: ''});
+    this.setState({ title: '', body: '', completed: false });
   }
 
   click(e) {
     e.preventDefault();
-    this.props.receiveTodo(uniqueId(),
-                           this.state.title,
-                           this.state.body
-                         );
-  this.resetFields();
+
+    this.props.createTodo({ title: this.state.title,
+                           body: this.state.body,
+                           completed: this.state.completed
+                         })
+    .then(() => this.resetFields());
   }
 
   render() {
-    const {title, body} = this.state;
+    const {title, body, completed} = this.state;
     return (
-      <form>
+      <form onSubmit={this.click}>
         <h3>Create a New Todo</h3>
         <label>Title
           <input onChange={this.setTitle} value={title} />
@@ -51,7 +59,11 @@ class TodoForm extends React.Component {
           <input onChange={this.setBody} value={body} />
         </label>
         <br/>
-        <button onClick={this.click}>Submit</button>
+        <label>Completed
+          <input type="checkbox" onChange={this.setComplete} checked={completed} />
+        </label>
+        <br/>
+        <button>Submit</button>
       </form>
     );
   }
